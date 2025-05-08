@@ -104,91 +104,107 @@
   <h2>📊 분석 결과</h2>
   <div id="userInfo" class="output"></div>
   <div id="report" class="output"></div>
-  <div id="guide" class="output"></div>
+  
+<canvas id="chart" width="600" height="300"></canvas>
+<div id="guide" class="output"></div>
   <canvas id="scoreChart" width="600" height="300"></canvas>
 </div>
 
 <script>
-let userData = {};
-
-document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("introPage").style.display = "block";
-});
-
 function goToMainPage() {
-  userData.name = document.getElementById("name").value;
-  userData.age = document.getElementById("age").value;
-  userData.gender = document.getElementById("gender").value;
-  userData.height = document.getElementById("height").value;
-  userData.weight = document.getElementById("weight").value;
+  const userData = {
+    name: document.getElementById("name").value,
+    age: document.getElementById("age").value,
+    gender: document.getElementById("gender").value,
+    height: document.getElementById("height").value,
+    weight: document.getElementById("weight").value
+  };
+  localStorage.setItem("userData", JSON.stringify(userData));
   document.getElementById("introPage").style.display = "none";
   document.getElementById("mainPage").style.display = "block";
 }
 
 function generateReport() {
-  const f = document.forms["healthForm"];
-  const scores = { 기체: 0, 혈허: 0, 음허: 0, 식적: 0, 간기울결: 0 };
+  const userData = JSON.parse(localStorage.getItem("userData"));
+  const heightM = userData.height / 100;
+  const bmi = (userData.weight / (heightM * heightM)).toFixed(1);
+  let bmiMsg = "";
+  if (bmi < 18.5) bmiMsg = "저체중: 근육량 및 영양 상태 점검 필요";
+  else if (bmi < 23) bmiMsg = "정상 체중: 현재 상태 유지";
+  else if (bmi < 25) bmiMsg = "과체중: 운동과 식이조절 필요";
+  else bmiMsg = "비만: 체중 조절과 생활습관 개선 필요";
 
-  
-  console.log("슬라이더 입력값 확인:", {
-    bowel_freq: f["bowel_freq"].value,
-    bowel_satisfaction: f["bowel_satisfaction"].value,
-    urine_freq: f["urine_freq"].value,
-    sleep_time: f["sleep_time"].value,
-    sleep_quality: f["sleep_quality"].value,
-    meal_amount: f["meal_amount"].value,
-    digest_discomfort: f["digest_discomfort"].value,
-    emotion: f["emotion"].value
-  });
-const d = {
-    bowel_freq: parseInt(f["bowel_freq"].value),
-    bowel_satisfaction: parseInt(f["bowel_satisfaction"].value),
-    urine_freq: parseInt(f["urine_freq"].value),
-    sleep_time: parseInt(f["sleep_time"].value),
-    sleep_quality: parseInt(f["sleep_quality"].value),
-    meal_amount: parseInt(f["meal_amount"].value),
-    digest_discomfort: parseInt(f["digest_discomfort"].value),
-    emotion: parseInt(f["emotion"].value)
-  };
-
-  if (d.bowel_freq < 1 || d.bowel_satisfaction < 3) scores["기체"] += 2;
-  if (d.digest_discomfort >= 4) scores["식적"] += 2;
-  if (d.urine_freq > 8) scores["음허"] += 2;
-  if (d.sleep_time < 5 || d.sleep_quality <= 2) scores["혈허"] += 2;
-  if (d.emotion <= 2) scores["간기울결"] += 2;
+  let userInfo = `<h3>👤 입력한 신상 정보</h3><ul>
+    <li>이름: ${userData.name}</li>
+    <li>나이: ${userData.age}</li>
+    <li>성별: ${userData.gender}</li>
+    <li>키: ${userData.height} cm</li>
+    <li>몸무게: ${userData.weight} kg</li>
+    <li><strong>BMI: ${bmi}</strong> → ${bmiMsg}</li>
+  </ul>`;
+  document.getElementById("userInfo").innerHTML = userInfo;
 
   document.getElementById("mainPage").style.display = "none";
   document.getElementById("reportPage").style.display = "block";
 
-  const info = `
-    <h3>👤 사용자 정보</h3>
-    <ul>
-      <li>이름: ${userData.name}</li>
-      <li>나이: ${userData.age}</li>
-      <li>성별: ${userData.gender}</li>
-      <li>키: ${userData.height} cm</li>
-      <li>몸무게: ${userData.weight} kg</li>
-    </ul>`;
-  document.getElementById("userInfo").innerHTML = info;
+  const f = document.forms["healthForm"];
+  const scores = { 기체: 0, 혈허: 0, 음허: 0, 식적: 0, 간기울결: 0 };
 
-  let result = "<h3>체질 점수</h3><ul>";
+  const bf = parseInt(f["bowel_freq"].value);
+  const bs = parseInt(f["bowel_satisfaction"].value);
+  const uf = parseInt(f["urine_freq"].value);
+  const st = parseInt(f["sleep_time"].value);
+  const sq = parseInt(f["sleep_quality"].value);
+  const ma = parseInt(f["meal_amount"].value);
+  const dd = parseInt(f["digest_discomfort"].value);
+  const em = parseInt(f["emotion"].value);
+
+  if (bf === 0) scores["기체"] += 2;
+  else if (bf === 1) scores["기체"] += 1;
+  if (bs <= 2) scores["기체"] += 1;
+
+  if (st <= 3) scores["혈허"] += 2;
+  else if (st <= 5) scores["혈허"] += 1;
+  if (sq <= 2) scores["혈허"] += 1;
+  if (ma === 1) scores["혈허"] += 2;
+  else if (ma === 2) scores["혈허"] += 1;
+
+  if (uf >= 9) scores["음허"] += 2;
+  else if (uf >= 7) scores["음허"] += 1;
+
+  if (dd >= 4) scores["식적"] += 2;
+  else if (dd === 3) scores["식적"] += 1;
+  if (ma === 5) scores["식적"] += 2;
+  else if (ma === 4) scores["식적"] += 1;
+
+  if (em === 1) scores["간기울결"] += 2;
+  else if (em === 2) scores["간기울결"] += 1;
+
+  let report = "<h3>체질 점수</h3><ul>";
   for (let k in scores) {
-    result += `<li><strong>${k}</strong>: ${scores[k]}점</li>`;
+    report += `<li><strong>${k}</strong>: ${scores[k]}점</li>`;
   }
-  result += "</ul>";
-  document.getElementById("report").innerHTML = result;
+  report += "</ul>";
+  document.getElementById("report").innerHTML = report;
 
-  let guide = "<h3>🧭 생활 가이드</h3><ul>";
-  if (scores["기체"] >= 2) guide += "<li>산책, 스트레칭으로 기 순환을 돕기</li>";
-  if (scores["혈허"] >= 2) guide += "<li>수면 확보와 철분 식단 섭취</li>";
-  if (scores["음허"] >= 2) guide += "<li>수분 보충, 야간 활동 자제</li>";
-  if (scores["식적"] >= 2) guide += "<li>소식, 자극적 음식 줄이기</li>";
-  if (scores["간기울결"] >= 2) guide += "<li>명상, 감정 해소 활동하기</li>";
+  let guide = "<h3>생활 가이드</h3><ul>";
+  const s = scores;
+  if (s["기체"] === 1) guide += "<li>기 순환 약간 정체. 복부 마사지 추천</li>";
+  if (s["기체"] >= 2) guide += "<li>기체 심화. 규칙적 식사와 운동 필요</li>";
+  if (s["혈허"] === 1) guide += "<li>에너지 소모 주의. 휴식 강화</li>";
+  if (s["혈허"] >= 2) guide += "<li>혈허 경향. 숙면 + 철분 보충 식단 필요</li>";
+  if (s["음허"] === 1) guide += "<li>물 자주 마시고, 야간 활동 줄이기</li>";
+  if (s["음허"] >= 2) guide += "<li>음허 심화. 수분 섭취 + 과로 금지</li>";
+  if (s["식적"] === 1) guide += "<li>소화 불편 약간 있음. 식사량 조절 필요</li>";
+  if (s["식적"] >= 2) guide += "<li>식적 심화. 절식 및 자극적 음식 피하기</li>";
+  if (s["간기울결"] === 1) guide += "<li>감정 조절 필요. 산책, 음악 추천</li>";
+  if (s["간기울결"] >= 2) guide += "<li>정서 불안정. 명상, 일기, 대화 활용</li>";
+  if (Object.values(s).every(v => v === 0)) guide += "<li>균형 잡힌 상태입니다. 현재 생활습관 유지하세요.</li>";
   guide += "</ul>";
   document.getElementById("guide").innerHTML = guide;
 
   if (window.myChart) window.myChart.destroy();
-  const ctx = document.getElementById("scoreChart").getContext("2d");
+  const ctx = document.getElementById("chart").getContext("2d");
   window.myChart = new Chart(ctx, {
     type: 'bar',
     data: {
@@ -200,12 +216,7 @@ const d = {
       }]
     },
     options: {
-      scales: {
-        y: {
-          beginAtZero: true,
-          max: 5
-        }
-      }
+      scales: { y: { beginAtZero: true, max: 6 } }
     }
   });
 }
