@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>체질 리포트 시스템</title>
+  <title>氣象</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
@@ -54,6 +54,11 @@
 </head>
 <body>
 
+
+  <div style="text-align: center; margin-bottom: 30px;">
+    <h1 style="font-size: 2.5em; margin: 0;">氣象</h1>
+    <div style="font-size: 1.1em; color: #555;">한의 데일리 리포트</div>
+  </div>
 <div id="introPage">
   <h2>👤 기본 정보 입력</h2>
   <div class="section"><label>이름<input type="text" id="name" /></label></div>
@@ -124,7 +129,18 @@ function generateReport() {
   const f = document.forms["healthForm"];
   const scores = { 기체: 0, 혈허: 0, 음허: 0, 식적: 0, 간기울결: 0 };
 
-  const d = {
+  
+  console.log("슬라이더 입력값 확인:", {
+    bowel_freq: f["bowel_freq"].value,
+    bowel_satisfaction: f["bowel_satisfaction"].value,
+    urine_freq: f["urine_freq"].value,
+    sleep_time: f["sleep_time"].value,
+    sleep_quality: f["sleep_quality"].value,
+    meal_amount: f["meal_amount"].value,
+    digest_discomfort: f["digest_discomfort"].value,
+    emotion: f["emotion"].value
+  });
+const d = {
     bowel_freq: parseInt(f["bowel_freq"].value),
     bowel_satisfaction: parseInt(f["bowel_satisfaction"].value),
     urine_freq: parseInt(f["urine_freq"].value),
