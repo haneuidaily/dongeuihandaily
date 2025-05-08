@@ -1,11 +1,12 @@
 <!DOCTYPE html>
+
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>氣象</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
+<meta charset="utf-8"/>
+<title>氣象</title>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
     body { font-family: sans-serif; padding: 20px; max-width: 700px; margin: auto; }
     .section { margin-bottom: 20px; }
     label { display: block; font-weight: bold; margin-bottom: 6px; }
@@ -53,63 +54,58 @@
   </style>
 </head>
 <body>
-
-
-  <div style="text-align: center; margin-bottom: 30px;">
-    <h1 style="font-size: 2.5em; margin: 0;">氣象</h1>
-    <div style="font-size: 1.1em; color: #555;">한의 데일리 리포트</div>
-  </div>
+<div style="text-align: center; margin-bottom: 30px;">
+<h1 style="font-size: 2.5em; margin: 0;">氣象</h1>
+<div style="font-size: 1.1em; color: #555;">한의 데일리 리포트</div>
+</div>
 <div id="introPage">
-  <h2>👤 기본 정보 입력</h2>
-  <div class="section"><label>이름<input type="text" id="name" /></label></div>
-  <div class="section"><label>나이<input type="number" id="age" /></label></div>
-  <div class="section"><label>성별<select id="gender"><option>남</option><option>여</option></select></label></div>
-  <div class="section"><label>키 (cm)<input type="number" id="height" /></label></div>
-  <div class="section"><label>몸무게 (kg)<input type="number" id="weight" /></label></div>
-  <button class="btn" onclick="goToMainPage()">입력 완료</button>
+<h2>👤 기본 정보 입력</h2>
+<div class="section"><label>이름<input id="name" type="text"/></label></div>
+<div class="section"><label>나이<input id="age" type="number"/></label></div>
+<div class="section"><label>성별<select id="gender"><option>남</option><option>여</option></select></label></div>
+<div class="section"><label>키 (cm)<input id="height" type="number"/></label></div>
+<div class="section"><label>몸무게 (kg)<input id="weight" type="number"/></label></div>
+<button class="btn" onclick="goToMainPage()">입력 완료</button>
 </div>
-
 <div id="mainPage">
-  <h2>📋 건강 정보 입력</h2>
-  <form id="healthForm">
-    <div class="section"><label>대변 빈도</label>
-      <div class="range-wrapper"><input type="range" name="bowel_freq" min="0" max="3" value="1">
-      <div class="range-labels-absolute"><span>0</span><span>1</span><span>2</span><span>3</span></div></div></div>
-    <div class="section"><label>대변 시원함</label>
-      <div class="range-wrapper"><input type="range" name="bowel_satisfaction" min="1" max="5" value="3">
-      <div class="range-labels-absolute"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div></div></div>
-    <div class="section"><label>소변 빈도</label>
-      <div class="range-wrapper"><input type="range" name="urine_freq" min="1" max="10" value="5">
-      <div class="range-labels-absolute"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span></div></div></div>
-    <div class="section"><label>수면 시간</label>
-      <div class="range-wrapper"><input type="range" name="sleep_time" min="0" max="12" value="6">
-      <div class="range-labels-absolute"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span></div></div></div>
-    <div class="section"><label>수면의 질</label>
-      <div class="range-wrapper"><input type="range" name="sleep_quality" min="1" max="5" value="3">
-      <div class="range-labels-absolute"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div></div></div>
-    <div class="section"><label>식사량</label>
-      <div class="range-wrapper"><input type="range" name="meal_amount" min="1" max="5" value="3">
-      <div class="range-labels-absolute"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div></div></div>
-    <div class="section"><label>식후 불편감</label>
-      <div class="range-wrapper"><input type="range" name="digest_discomfort" min="1" max="5" value="2">
-      <div class="range-labels-absolute"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div></div></div>
-    <div class="section"><label>감정 상태</label>
-      <div class="range-wrapper"><input type="range" name="emotion" min="1" max="5" value="3">
-      <div class="range-labels-absolute"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div></div></div>
-    <button type="button" class="btn" onclick="generateReport()">리포트 생성</button>
-  </form>
+<h2>📋 건강 정보 입력</h2>
+<form id="healthForm">
+<div class="section"><label>대변 빈도</label>
+<div class="range-wrapper"><input max="3" min="0" name="bowel_freq" type="range" value="1"/>
+<div class="range-labels-absolute"><span>0</span><span>1</span><span>2</span><span>3</span></div></div></div>
+<div class="section"><label>대변 시원함</label>
+<div class="range-wrapper"><input max="5" min="1" name="bowel_satisfaction" type="range" value="3"/>
+<div class="range-labels-absolute"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div></div></div>
+<div class="section"><label>소변 빈도</label>
+<div class="range-wrapper"><input max="10" min="1" name="urine_freq" type="range" value="5"/>
+<div class="range-labels-absolute"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span></div></div></div>
+<div class="section"><label>수면 시간</label>
+<div class="range-wrapper"><input max="12" min="0" name="sleep_time" type="range" value="6"/>
+<div class="range-labels-absolute"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span></div></div></div>
+<div class="section"><label>수면의 질</label>
+<div class="range-wrapper"><input max="5" min="1" name="sleep_quality" type="range" value="3"/>
+<div class="range-labels-absolute"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div></div></div>
+<div class="section"><label>식사량</label>
+<div class="range-wrapper"><input max="5" min="1" name="meal_amount" type="range" value="3"/>
+<div class="range-labels-absolute"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div></div></div>
+<div class="section"><label>식후 불편감</label>
+<div class="range-wrapper"><input max="5" min="1" name="digest_discomfort" type="range" value="2"/>
+<div class="range-labels-absolute"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div></div></div>
+<div class="section"><label>감정 상태</label>
+<div class="range-wrapper"><input max="5" min="1" name="emotion" type="range" value="3"/>
+<div class="range-labels-absolute"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div></div></div>
+<button class="btn" onclick="generateReport()" type="button">리포트 생성</button>
+</form>
 </div>
-
 <div id="reportPage">
-  <h2>📊 분석 결과</h2>
-  <div id="userInfo" class="output"></div>
-  <div id="report" class="output"></div>
-  
-<canvas id="chart" width="600" height="300"></canvas>
-<div id="guide" class="output"></div>
-  <canvas id="scoreChart" width="600" height="300"></canvas>
+<h2>📊 분석 결과</h2>
+<div class="output" id="userInfo"></div>
+<div class="output" id="report"></div>
+<canvas height="300" id="chart" width="600"></canvas>
+<div class="output" id="guide"></div>
+<canvas id="scoreChart"></canvas>
+<h3>📈 일주일 변화 추이</h3><canvas height="300" id="trendChart" style="margin-top:30px;" width="600"></canvas> width="600" height="300"&gt;
 </div>
-
 <script>
 function goToMainPage() {
   const userData = {
@@ -149,6 +145,13 @@ function generateReport() {
 
   const f = document.forms["healthForm"];
   const scores = { 기체: 0, 혈허: 0, 음허: 0, 식적: 0, 간기울결: 0 };
+  const today = new Date().toISOString().slice(0, 10);
+  const record = { date: today, scores };
+  let history = JSON.parse(localStorage.getItem("scoreHistory")) || [];
+  history = history.filter(h => h.date !== today);
+  history.push(record);
+  localStorage.setItem("scoreHistory", JSON.stringify(history));
+
 
   const bf = parseInt(f["bowel_freq"].value);
   const bs = parseInt(f["bowel_satisfaction"].value);
@@ -219,6 +222,37 @@ function generateReport() {
       scales: { y: { beginAtZero: true, max: 6 } }
     }
   });
+  function getColorForKey(key) {
+    const colors = {
+      기체: '#007bff',
+      혈허: '#e83e8c',
+      음허: '#28a745',
+      식적: '#fd7e14',
+      간기울결: '#6f42c1'
+    };
+    return colors[key] || '#999';
+  }
+
+  const trendCtx = document.getElementById("trendChart").getContext("2d");
+  const last7 = history.slice(-7);
+  const labels = last7.map(d => d.date);
+  const datasets = Object.keys(scores).map(key => ({
+    label: key,
+    data: last7.map(d => d.scores[key] || 0),
+    fill: false,
+    borderColor: getColorForKey(key),
+    tension: 0.3
+  }));
+
+  new Chart(trendCtx, {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      scales: { y: { beginAtZero: true, max: 6 } },
+      plugins: { legend: { position: 'bottom' } }
+    }
+  });
+
 }
 </script>
 </body>
