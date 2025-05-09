@@ -94,6 +94,61 @@
 <div class="section"><label>감정 상태</label>
 <div class="range-wrapper"><input max="5" min="1" name="emotion" type="range" value="3"/>
 <div class="range-labels-absolute"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div></div></div>
+
+<div class="section"><label>몸의 위치적 증상 (表裏)</label>
+  <select name="pyo_li">
+    <option value="0">겉(피부, 외부)이 더 민감하다</option>
+    <option value="1">속(복부, 내장)이 더 불편하다</option>
+  </select>
+</div>
+
+<div class="section"><label>몸의 체감 온도 (寒熱)</label>
+  <select name="han_yeol">
+    <option value="0">추위를 많이 탄다</option>
+    <option value="1">열이 많고 더위를 많이 탄다</option>
+  </select>
+</div>
+
+<div class="section"><label>피로와 긴장의 정도 (虛實)</label>
+  <select name="heo_sil">
+    <option value="0">무기력하고 기운이 없다</option>
+    <option value="1">몸에 긴장감이 있고 억눌리는 느낌</option>
+  </select>
+</div>
+
+<div class="section"><label>전체적인 경향 (陰陽)</label>
+  <select name="eum_yang">
+    <option value="0">차분하고 내향적인 편</option>
+    <option value="1">활동적이고 외향적인 편</option>
+  </select>
+</div>
+
+<div class="section"><label>평소 성격</label>
+  <select name="personality">
+    <option value="soyang">외향적이고 급한 성격</option>
+    <option value="taeyang">활동적이고 의욕은 많지만 쉽게 피로</option>
+    <option value="soeum">내향적이고 조용하며 예민</option>
+    <option value="taeeum">차분하고 참을성이 많으며 느긋함</option>
+  </select>
+</div>
+
+<div class="section"><label>식욕 상태</label>
+  <select name="appetite">
+    <option value="taeeum">식욕이 왕성하고 잘 먹는 편</option>
+    <option value="soeum">소화가 잘 안되고 자주 체함</option>
+    <option value="soyang">금방 배고프고 자주 먹지만 변이 무르거나 묽음</option>
+    <option value="taeyang">조금만 먹어도 속이 더부룩함</option>
+  </select>
+</div>
+
+<div class="section"><label>체형적 특징</label>
+  <select name="bodyshape">
+    <option value="taeeum">몸집이 크고 살이 잘 찌는 편</option>
+    <option value="soeum">마르고 체력이 약한 편</option>
+    <option value="soyang">상체가 발달되고 하체가 빈약</option>
+    <option value="taeyang">팔다리가 가늘고 얼굴이 붉거나 열이 많음</option>
+  </select>
+</div>
 <button class="btn" onclick="generateReport()" type="button">리포트 생성</button>
 </form>
 </div>
@@ -190,7 +245,89 @@ function generateReport() {
   report += "</ul>";
   document.getElementById("report").innerHTML = report;
 
-  let guide = "<h3>생활 가이드</h3><ul>";
+  
+
+  // 🔍 팔강변증 값 수집
+  const pyo_li = parseInt(f["pyo_li"].value);
+  const han_yeol = parseInt(f["han_yeol"].value);
+  const heo_sil = parseInt(f["heo_sil"].value);
+  const eum_yang = parseInt(f["eum_yang"].value);
+
+  let palgangReport = "<h3>팔강변증 분석</h3><ul>";
+  if (pyo_li === 0) {
+    palgangReport += "<li><strong>표증</strong>: 외부 자극에 민감. 바람과 찬 기운 주의</li>";
+  } else {
+    palgangReport += "<li><strong>리증</strong>: 내부 장기 기능 주의. 따뜻한 음식 섭취 권장</li>";
+  }
+  if (han_yeol === 0) {
+    palgangReport += "<li><strong>한증</strong>: 추위를 많이 느낌. 따뜻한 음식과 생강차 권장</li>";
+  } else {
+    palgangReport += "<li><strong>열증</strong>: 더위를 느낌. 수분 섭취와 열성 음식 자제</li>";
+  }
+  if (heo_sil === 0) {
+    palgangReport += "<li><strong>허증</strong>: 기력이 부족. 휴식과 영양 섭취 필요</li>";
+  } else {
+    palgangReport += "<li><strong>실증</strong>: 몸에 긴장과 과잉. 스트레스 해소와 이완 요법 권장</li>";
+  }
+  if (eum_yang === 0) {
+    palgangReport += "<li><strong>음성 경향</strong>: 내향적이고 예민. 마음 안정이 중요</li>";
+  } else {
+    palgangReport += "<li><strong>양성 경향</strong>: 외향적이고 활동적. 과도한 행동은 자제</li>";
+  }
+  palgangReport += "</ul>";
+  document.getElementById("report").innerHTML += palgangReport;
+
+  // 🔍 사상체질 판별
+  const sasangVotes = { 태양인: 0, 소양인: 0, 태음인: 0, 소음인: 0 };
+  const personality = f["personality"].value;
+  const appetite = f["appetite"].value;
+  const bodyshape = f["bodyshape"].value;
+
+  const mapping = {
+    soyang: "소양인",
+    soeum: "소음인",
+    taeyang: "태양인",
+    taeeum: "태음인"
+  };
+
+  sasangVotes[mapping[personality]]++;
+  sasangVotes[mapping[appetite]]++;
+  sasangVotes[mapping[bodyshape]]++;
+
+  let maxVotes = 0;
+  let finalType = "";
+  for (let k in sasangVotes) {
+    if (sasangVotes[k] > maxVotes) {
+      maxVotes = sasangVotes[k];
+      finalType = k;
+    }
+  }
+
+  let sasangReport = "<h3>사상체질 분석</h3>";
+  sasangReport += `<p><strong>판별된 체질: ${finalType}</strong></p>`;
+  sasangReport += "<ul>";
+  if (finalType === "태양인") {
+    sasangReport += "<li>간 기능 강화 필요. 등산, 숨쉬기 운동 추천</li>";
+    sasangReport += "<li>기름기 많은 음식은 피하고, 담백한 음식 섭취</li>";
+    sasangReport += "";
+  } else if (finalType === "소양인") {
+    sasangReport += "<li>심장과 비장 보호, 과로 금지</li>";
+    sasangReport += "<li>매운 음식, 카페인 섭취 자제</li>";
+    sasangReport += "";
+  } else if (finalType === "태음인") {
+    sasangReport += "<li>폐기능 강화, 땀 배출을 위한 유산소 운동 필요</li>";
+    sasangReport += "<li>기름진 음식 조절, 식이 섬유 섭취 증가</li>";
+    sasangReport += "";
+  } else if (finalType === "소음인") {
+    sasangReport += "<li>위장 기능 보호. 무리한 운동 피하기</li>";
+    sasangReport += "<li>따뜻하고 소화 잘 되는 음식 섭취</li>";
+    sasangReport += "";
+  }
+  sasangReport += "</ul>";
+  document.getElementById("report").innerHTML += sasangReport;
+
+
+let guide = "<h3>생활 가이드</h3><ul>";
   const s = scores;
   if (s["기체"] === 1) guide += "<li>기 순환 약간 정체. 복부 마사지 추천</li>";
   if (s["기체"] >= 2) guide += "<li>기체 심화. 규칙적 식사와 운동 필요</li>";
@@ -206,23 +343,52 @@ function generateReport() {
   guide += "</ul>";
   document.getElementById("guide").innerHTML = guide;
 
-  let prescriptions = [];
-  if (scores["기체"] >= 2)
-    prescriptions.push("<strong>향소산 / 시호소간탕 / 반하후박탕</strong>: 기순환을 도와 가슴 답답함을 개선합니다.");
-  if (scores["혈허"] >= 2)
-    prescriptions.push("<strong>당귀보혈탕 / 팔물탕 / 귀비탕</strong>: 혈을 보하고 기운을 북돋아줍니다.");
-  if (scores["음허"] >= 2)
-    prescriptions.push("<strong>자음강화탕 / 육미지황탕 / 청심연자음</strong>: 체내 음을 보충하고 열감을 식혀줍니다.");
-  if (scores["식적"] >= 2)
-    prescriptions.push("<strong>평위산 / 지실도체환 / 목향빈랑환</strong>: 위장 기능을 개선하고 적체를 풀어줍니다.");
-  if (scores["간기울결"] >= 2)
-    prescriptions.push("<strong>가미소요산 / 시호소간탕 / 천왕보심단</strong>: 감정 억제를 완화하고 간기순환을 도와줍니다.");
+  
 
-  let recommendation = prescriptions.length > 0
-    ? "<h3>📦 추천 한약</h3><ul>" + prescriptions.map(p => `<li>${p}</li>`).join("") + "</ul>"
-    : "<h3>📦 추천 한약</h3><p>현재 상태에서는 특별한 처방이 필요하지 않을 수 있습니다.</p>";
 
-  document.getElementById("recommend").innerHTML = recommendation;
+  
+  
+  // 📦 추천 한약 정리
+  const recommendList = [];
+
+  // 건강 점수 기반 추천
+  if (scores["기체"] >= 2) recommendList.push("시호소간탕");
+  if (scores["혈허"] >= 2) recommendList.push("귀비탕");
+  if (scores["음허"] >= 2) recommendList.push("육미지황탕");
+  if (scores["식적"] >= 2) recommendList.push("지실도체환");
+  if (scores["간기울결"] >= 2) recommendList.push("가미소요산");
+
+  // 팔강변증 기반 추천
+  const palgangList = [];
+  if (pyo_li === 0) palgangList.push("형개연교탕");
+  if (pyo_li === 1) palgangList.push("사군자탕");
+  if (han_yeol === 0) palgangList.push("부자이중탕");
+  if (han_yeol === 1) palgangList.push("황련해독탕");
+  if (heo_sil === 0) palgangList.push("팔물탕");
+  if (heo_sil === 1) palgangList.push("방풍통성산");
+  if (eum_yang === 0) palgangList.push("자음강화탕");
+  if (eum_yang === 1) palgangList.push("용담사간탕");
+
+  // 사상체질 기반 추천
+  let sasangList = [];
+  if (finalType === "태양인") sasangList = ["오가피탕"];
+  if (finalType === "소양인") sasangList = ["형방지황탕"];
+  if (finalType === "태음인") sasangList = ["태음조위탕"];
+  if (finalType === "소음인") sasangList = ["보중익기탕"];
+
+  // 종합 추출 (빈도순 상위 3개)
+  const freq = {};
+  [...recommendList, ...palgangList, ...sasangList].forEach(p => freq[p] = (freq[p] || 0) + 1);
+  const top3 = Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([k]) => k);
+
+  const finalHTML = `
+    <h3>📦 추천 한약</h3>
+    <p><strong>사상체질에 따른 한약 추천:</strong> ${sasangList.join(", ") || "해당 없음"}</p>
+    <p><strong>팔강변증별 한약 추천:</strong> ${palgangList.join(", ") || "해당 없음"}</p>
+    <p><strong>종합적 한약 추천:</strong> ${top3.join(", ") || "해당 없음"}</p>
+    <p><strong>복용법:</strong> 하루 3회, 식후 30분에 따뜻하게 복용하세요.</p>
+  `;
+  document.getElementById("recommend").innerHTML = finalHTML;
 
 
   if (window.myChart) window.myChart.destroy();
