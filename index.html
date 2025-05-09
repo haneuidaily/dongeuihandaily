@@ -82,16 +82,16 @@
 <div class="section"><label>수면 시간</label>
 <div class="range-wrapper"><input max="12" min="0" name="sleep_time" type="range" value="6"/>
 <div class="range-labels-absolute"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span></div></div></div>
-<div class="section"><label>수면의 질</label>
+<div class="section"><label>수면의 질 (1: 매우 나쁨 ~ 5: 매우 좋음)</label>
 <div class="range-wrapper"><input max="5" min="1" name="sleep_quality" type="range" value="3"/>
 <div class="range-labels-absolute"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div></div></div>
-<div class="section"><label>식사량</label>
+<div class="section"><label>식사량 (1: 적음 ~ 5: 많음)</label>
 <div class="range-wrapper"><input max="5" min="1" name="meal_amount" type="range" value="3"/>
 <div class="range-labels-absolute"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div></div></div>
-<div class="section"><label>식후 불편감</label>
+<div class="section"><label>식후 불편감 (1: 전혀 없음 ~ 5: 매우 심함)</label>
 <div class="range-wrapper"><input max="5" min="1" name="digest_discomfort" type="range" value="2"/>
 <div class="range-labels-absolute"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div></div></div>
-<div class="section"><label>감정 상태</label>
+<div class="section"><label>감정 상태 (1: 우울/불안 ~ 5: 안정/긍정)</label>
 <div class="range-wrapper"><input max="5" min="1" name="emotion" type="range" value="3"/>
 <div class="range-labels-absolute"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div></div></div>
 
@@ -309,19 +309,19 @@ function generateReport() {
   if (finalType === "태양인") {
     sasangReport += "<li>간 기능 강화 필요. 등산, 숨쉬기 운동 추천</li>";
     sasangReport += "<li>기름기 많은 음식은 피하고, 담백한 음식 섭취</li>";
-    sasangReport += "";
+    sasangReport += "<li><strong>추천 한약</strong>: 오가피탕, 우황청심원</li>";
   } else if (finalType === "소양인") {
     sasangReport += "<li>심장과 비장 보호, 과로 금지</li>";
     sasangReport += "<li>매운 음식, 카페인 섭취 자제</li>";
-    sasangReport += "";
+    sasangReport += "<li><strong>추천 한약</strong>: 형방지황탕, 시호청간탕</li>";
   } else if (finalType === "태음인") {
     sasangReport += "<li>폐기능 강화, 땀 배출을 위한 유산소 운동 필요</li>";
     sasangReport += "<li>기름진 음식 조절, 식이 섬유 섭취 증가</li>";
-    sasangReport += "";
+    sasangReport += "<li><strong>추천 한약</strong>: 태음조위탕, 청심연자음</li>";
   } else if (finalType === "소음인") {
     sasangReport += "<li>위장 기능 보호. 무리한 운동 피하기</li>";
     sasangReport += "<li>따뜻하고 소화 잘 되는 음식 섭취</li>";
-    sasangReport += "";
+    sasangReport += "<li><strong>추천 한약</strong>: 곽향정기산, 보중익기탕</li>";
   }
   sasangReport += "</ul>";
   document.getElementById("report").innerHTML += sasangReport;
@@ -343,52 +343,23 @@ let guide = "<h3>생활 가이드</h3><ul>";
   guide += "</ul>";
   document.getElementById("guide").innerHTML = guide;
 
-  
+  let prescriptions = [];
+  if (scores["기체"] >= 2)
+    prescriptions.push("<strong>향소산 / 시호소간탕 / 반하후박탕</strong>: 기순환을 도와 가슴 답답함을 개선합니다.");
+  if (scores["혈허"] >= 2)
+    prescriptions.push("<strong>당귀보혈탕 / 팔물탕 / 귀비탕</strong>: 혈을 보하고 기운을 북돋아줍니다.");
+  if (scores["음허"] >= 2)
+    prescriptions.push("<strong>자음강화탕 / 육미지황탕 / 청심연자음</strong>: 체내 음을 보충하고 열감을 식혀줍니다.");
+  if (scores["식적"] >= 2)
+    prescriptions.push("<strong>평위산 / 지실도체환 / 목향빈랑환</strong>: 위장 기능을 개선하고 적체를 풀어줍니다.");
+  if (scores["간기울결"] >= 2)
+    prescriptions.push("<strong>가미소요산 / 시호소간탕 / 천왕보심단</strong>: 감정 억제를 완화하고 간기순환을 도와줍니다.");
 
+  let recommendation = prescriptions.length > 0
+    ? "<h3>📦 추천 한약</h3><ul>" + prescriptions.map(p => `<li>${p}</li>`).join("") + "</ul>"
+    : "<h3>📦 추천 한약</h3><p>현재 상태에서는 특별한 처방이 필요하지 않을 수 있습니다.</p>";
 
-  
-  
-  // 📦 추천 한약 정리
-  const recommendList = [];
-
-  // 건강 점수 기반 추천
-  if (scores["기체"] >= 2) recommendList.push("시호소간탕");
-  if (scores["혈허"] >= 2) recommendList.push("귀비탕");
-  if (scores["음허"] >= 2) recommendList.push("육미지황탕");
-  if (scores["식적"] >= 2) recommendList.push("지실도체환");
-  if (scores["간기울결"] >= 2) recommendList.push("가미소요산");
-
-  // 팔강변증 기반 추천
-  const palgangList = [];
-  if (pyo_li === 0) palgangList.push("형개연교탕");
-  if (pyo_li === 1) palgangList.push("사군자탕");
-  if (han_yeol === 0) palgangList.push("부자이중탕");
-  if (han_yeol === 1) palgangList.push("황련해독탕");
-  if (heo_sil === 0) palgangList.push("팔물탕");
-  if (heo_sil === 1) palgangList.push("방풍통성산");
-  if (eum_yang === 0) palgangList.push("자음강화탕");
-  if (eum_yang === 1) palgangList.push("용담사간탕");
-
-  // 사상체질 기반 추천
-  let sasangList = [];
-  if (finalType === "태양인") sasangList = ["오가피탕"];
-  if (finalType === "소양인") sasangList = ["형방지황탕"];
-  if (finalType === "태음인") sasangList = ["태음조위탕"];
-  if (finalType === "소음인") sasangList = ["보중익기탕"];
-
-  // 종합 추출 (빈도순 상위 3개)
-  const freq = {};
-  [...recommendList, ...palgangList, ...sasangList].forEach(p => freq[p] = (freq[p] || 0) + 1);
-  const top3 = Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([k]) => k);
-
-  const finalHTML = `
-    <h3>📦 추천 한약</h3>
-    <p><strong>사상체질에 따른 한약 추천:</strong> ${sasangList.join(", ") || "해당 없음"}</p>
-    <p><strong>팔강변증별 한약 추천:</strong> ${palgangList.join(", ") || "해당 없음"}</p>
-    <p><strong>종합적 한약 추천:</strong> ${top3.join(", ") || "해당 없음"}</p>
-    <p><strong>복용법:</strong> 하루 3회, 식후 30분에 따뜻하게 복용하세요.</p>
-  `;
-  document.getElementById("recommend").innerHTML = finalHTML;
+  document.getElementById("recommend").innerHTML = recommendation;
 
 
   if (window.myChart) window.myChart.destroy();
