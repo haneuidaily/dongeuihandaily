@@ -102,7 +102,7 @@
 <div class="output" id="userInfo"></div>
 <div class="output" id="report"></div>
 <canvas height="300" id="chart" width="600"></canvas>
-<div class="output" id="guide"></div>
+<div class="output" id="recommend"></div><div class="output" id="guide"></div>
 <canvas id="scoreChart"></canvas>
 <h3>📈 일주일 변화 추이</h3><canvas height="300" id="trendChart" style="margin-top:30px;" width="600"></canvas> width="600" height="300"&gt;
 </div>
@@ -205,6 +205,25 @@ function generateReport() {
   if (Object.values(s).every(v => v === 0)) guide += "<li>균형 잡힌 상태입니다. 현재 생활습관 유지하세요.</li>";
   guide += "</ul>";
   document.getElementById("guide").innerHTML = guide;
+
+  let prescriptions = [];
+  if (scores["기체"] >= 2)
+    prescriptions.push("<strong>향소산 / 시호소간탕 / 반하후박탕</strong>: 기순환을 도와 가슴 답답함을 개선합니다.");
+  if (scores["혈허"] >= 2)
+    prescriptions.push("<strong>당귀보혈탕 / 팔물탕 / 귀비탕</strong>: 혈을 보하고 기운을 북돋아줍니다.");
+  if (scores["음허"] >= 2)
+    prescriptions.push("<strong>자음강화탕 / 육미지황탕 / 청심연자음</strong>: 체내 음을 보충하고 열감을 식혀줍니다.");
+  if (scores["식적"] >= 2)
+    prescriptions.push("<strong>평위산 / 지실도체환 / 목향빈랑환</strong>: 위장 기능을 개선하고 적체를 풀어줍니다.");
+  if (scores["간기울결"] >= 2)
+    prescriptions.push("<strong>가미소요산 / 시호소간탕 / 천왕보심단</strong>: 감정 억제를 완화하고 간기순환을 도와줍니다.");
+
+  let recommendation = prescriptions.length > 0
+    ? "<h3>📦 추천 한약</h3><ul>" + prescriptions.map(p => `<li>${p}</li>`).join("") + "</ul>"
+    : "<h3>📦 추천 한약</h3><p>현재 상태에서는 특별한 처방이 필요하지 않을 수 있습니다.</p>";
+
+  document.getElementById("recommend").innerHTML = recommendation;
+
 
   if (window.myChart) window.myChart.destroy();
   const ctx = document.getElementById("chart").getContext("2d");
